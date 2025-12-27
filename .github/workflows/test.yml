@@ -17,9 +17,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #os: [ubuntu-latest, macOS-latest, windows-latest]
         os: [ubuntu-latest, windows-latest]
-        python-version: [3.9, "3.10", "3.11"]
+        python-version: [3.9, "3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v3
       - uses: conda-incubator/setup-miniconda@v3
@@ -32,7 +31,7 @@ jobs:
         shell: bash -el {0}
         run: |
           conda activate test
-          conda install -c conda-forge -n test fortran-compiler blas-devel
+          conda install -c conda-forge -n test fortran-compiler blas-devel compilers
           pip install greenlet
           pip install --no-deps -r requirements/test-requirements.txt
           pip install .
