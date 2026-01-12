@@ -161,3 +161,6 @@ logs/
 
 .pdm-python
 requirements/local
+
+# uv
+uv.lock
