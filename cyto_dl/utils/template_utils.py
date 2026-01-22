@@ -181,7 +181,7 @@ def log_hyperparameters(object_dict: dict) -> None:
 
     hparams["task_name"] = cfg.get("task_name")
     hparams["tags"] = cfg.get("tags")
-    hparams["ckpt_path"] = cfg.checkpoint.get("ckpt_path")
+    hparams["ckpt_path"] = cfg.get("checkpoint", {}).get("ckpt_path")
     hparams["seed"] = cfg.get("seed")
 
     try:
