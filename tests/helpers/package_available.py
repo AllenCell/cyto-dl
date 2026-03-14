@@ -1,14 +1,15 @@
 import platform
+from importlib.metadata import PackageNotFoundError, distribution
 
-import pkg_resources
 from lightning.fabric.accelerators import TPUAccelerator
 
 
 def _package_available(package_name: str) -> bool:
     """Check if a package is available in your environment."""
     try:
-        return pkg_resources.require(package_name) is not None
-    except pkg_resources.DistributionNotFound:
+        distribution(package_name)
+        return True
+    except PackageNotFoundError:
         return False
 
 

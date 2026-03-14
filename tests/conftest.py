@@ -2,9 +2,13 @@ from typing import Generator
 
 import pyrootutils
 import pytest
+import torch
 from hydra import compose, initialize
 from hydra.core.global_hydra import GlobalHydra
+from monai.utils.enums import TraceKeys
 from omegaconf import DictConfig, OmegaConf, open_dict
+
+torch.serialization.add_safe_globals([TraceKeys])
 
 from cyto_dl.utils.config import kv_to_dict
 from scripts.download_test_data import delete_test_data, download_test_data
