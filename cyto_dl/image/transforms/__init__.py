@@ -6,6 +6,7 @@ from .multiscale_cropper import RandomMultiScaleCropd
 from .pad import PadZd
 from .project import Projectd  # codespell:ignore
 from .save import Save, Saved
+from .load_timelapse import LoadTimelapseImaged
 
 try:
     from .rotation_mask_transform import RotationMask, RotationMaskd
