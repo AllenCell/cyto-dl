@@ -4,8 +4,8 @@ from typing import Optional, Sequence
 
 import torch
 import torch.nn as nn
+import tifffile
 import tqdm
-from bioio.writers import OmeTiffWriter
 from monai.inferers import Inferer
 from monai.networks.schedulers import NoiseSchedules
 from monai.networks.schedulers.ddim import Scheduler
@@ -199,9 +199,9 @@ class DiffusionAutoEncoder(BaseModel):
         sample = self._generate_image(noise, cond)
 
         for img, name in zip([cond_img, diff_img, sample], ["cond", "diff", "recon"]):
-            OmeTiffWriter.save(
-                uri=f"{self.hparams.save_dir}/{self.trainer.current_epoch}_{stage}_{name}.tiff",
-                data=detach(img).astype(float),
+            tifffile.imwrite(
+                f"{self.hparams.save_dir}/{self.trainer.current_epoch}_{stage}_{name}.tiff",
+                detach(img).astype(float),
             )
 
     def model_step(self, stage, batch, batch_idx):
@@ -283,7 +283,7 @@ class DiffusionAutoEncoder(BaseModel):
                 recon = torch.cat(recon, -1)
         recon = detach(recon).astype(float)
         if save:
-            OmeTiffWriter.save(uri=f"{self.hparams.save_dir}/{save_name}.tiff", data=recon)
+            tifffile.imwrite(f"{self.hparams.save_dir}/{save_name}.tiff", recon)
         return recon
 
     def encode_image(self, x):
