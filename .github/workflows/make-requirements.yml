@@ -6,22 +6,26 @@ on:
     paths:
       - "pyproject.toml"
 
+permissions:
+  contents: write
+
 jobs:
   make-requirements:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up UV
-        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
+      - uses: actions/checkout@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
         with:
           python-version-file: "pyproject.toml"
-          version: "0.6.14"
+          # Pin to a recent uv release. Bump deliberately when needed.
+          version: "0.10.2"
       - name: Generate lockfile and requirements files
         shell: bash
         run: |
-          rm -r requirements/
+          rm -rf requirements/
           make sync-reqs-files
       - name: Commit and push
-        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Update lockfile and requirements files

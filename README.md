@@ -1,9 +1,9 @@
 <div align="center">
 
 <!-- <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/AllenCellModeling/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onDark.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/AllenCellModeling/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onLight.png">
-  <img src="https://github.com/AllenCellModeling/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onLight.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/AllenCell/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onDark.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/AllenCell/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onLight.png">
+  <img src="https://github.com/AllenCell/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onLight.png">
 </picture> -->
 
 <h1>CytoDL</h1>
@@ -17,9 +17,9 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/AllenCellModeling/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_dark_1.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/AllenCellModeling/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_light_1.png">
-    <img src="https://github.com/AllenCellModeling/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_light_1.png">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/AllenCell/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_dark_1.png">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/AllenCell/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_light_1.png">
+    <img src="https://github.com/AllenCell/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_light_1.png">
   </picture>
 </p>
 
@@ -41,7 +41,7 @@ Install dependencies.
 
 ```bash
 # clone project
-git clone https://github.com/AllenCellModeling/cyto-dl
+git clone https://github.com/AllenCell/cyto-dl
 cd cyto-dl
 
 # [OPTIONAL] create conda environment

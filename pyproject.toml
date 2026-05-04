@@ -4,7 +4,7 @@ build-backend = "pdm.pep517.api"
 
 [project]
 name = "cyto-dl"
-version = "0.6.2"
+version = "0.6.3"
 description = """\
   Collection of representation learning models, techniques, callbacks, utils, \
   used to create latent variable models of cell shape, morphology and \
@@ -25,7 +25,7 @@ dependencies = [
     "matplotlib>=3.9",
     "pandas>=2.2",
     "fire>=0.5",
-    "mlflow>=2.18",
+    "mlflow>=2.18,<3",
     "omegaconf>=2.3",
     "pyarrow>=18.0",
     "pyrootutils>=1.0",
@@ -103,7 +103,7 @@ docs = [
 
 
 [project.urls]
-Homepage = "https://github.com/AllenCellModeling/cyto-dl"
+Homepage = "https://github.com/AllenCell/cyto-dl"
 
 [tool.pdm.build]
 includes = ["cyto_dl", "README.md", "LICENSE", "**/*.yaml" ]
@@ -146,7 +146,7 @@ exclude_lines = [
 
 # https://pypi.org/project/bumpver
 [tool.bumpver]
-current_version = "0.6.2"
+current_version = "0.6.3"
 version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 commit_message  = "Bump version {old_version} -> {new_version}"
 commit          = true
