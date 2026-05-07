@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Union
 
-from bioio.writers import OmeTiffWriter
+import tifffile
 from lightning.pytorch.callbacks import Callback
 
 VALID_STAGES = ("train", "val", "test", "predict")
@@ -39,7 +39,7 @@ class ImageSaver(Callback):
 
     def _save(self, fn, data):
         fn.parent.mkdir(exist_ok=True, parents=True)
-        OmeTiffWriter.save(uri=fn, data=data)
+        tifffile.imwrite(fn, data)
 
     def on_predict_batch_end(
         self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0

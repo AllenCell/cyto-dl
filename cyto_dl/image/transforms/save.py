@@ -2,8 +2,8 @@ from pathlib import Path
 from typing import Sequence, Union
 
 import numpy as np
+import tifffile
 import torch
-from bioio.writers import OmeTiffWriter
 from monai.data.meta_tensor import MetaTensor
 from monai.transforms import Transform
 from omegaconf import ListConfig
@@ -27,9 +27,9 @@ class Save(Transform):
         self.count = 0
 
     def __call__(self, img, name="img"):
-        OmeTiffWriter.save(
-            uri=self.save_path / f"{name}_{self.count}.tif",
-            data=img if not isinstance(img, (torch.Tensor, MetaTensor)) else img.numpy(),
+        tifffile.imwrite(
+            self.save_path / f"{name}_{self.count}.tif",
+            img if not isinstance(img, (torch.Tensor, MetaTensor)) else img.numpy(),
         )
         self.count += 1
         return img

@@ -3,8 +3,8 @@ from warnings import warn
 
 import cv2
 import numpy as np
+import tifffile
 import torch
-from bioio.writers import OmeTiffWriter
 from lightning.pytorch.callbacks import Callback
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
@@ -110,7 +110,7 @@ class DiffAELatentWalk(Callback):
         # if vertically stack multi-channel generations
         walk_img = walk_img.reshape(walk_img.shape[0], -1, walk_img.shape[-1])
         walk_img = self._write_pc_vals(walk_img, ranges)
-        OmeTiffWriter.save(uri=save_path, data=walk_img)
+        tifffile.imwrite(save_path, walk_img)
 
     def on_validation_batch_end(
         self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0
