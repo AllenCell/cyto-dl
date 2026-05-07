@@ -22,14 +22,14 @@ def cloud_worker_init_fn(worker_id):
 
         # Clear cached filesystem instances that carry stale state
         fsspec.filesystem("clear")  # noqa: safe to call even if no cache
-    except Exception:
-        pass
+    except Exception as exc:  # nosec B110 - best-effort fsspec reset; failures are non-fatal
+        logger.debug("Worker %d: fsspec.asyn reset skipped (%s)", worker_id, exc)
 
     try:
         from fsspec.implementations.caching import CachingFileSystem
 
         CachingFileSystem._cache.clear()
-    except Exception:
-        pass
+    except Exception as exc:  # nosec B110 - best-effort cache reset; failures are non-fatal
+        logger.debug("Worker %d: CachingFileSystem reset skipped (%s)", worker_id, exc)
 
     logger.debug("Worker %d: fsspec state reset", worker_id)

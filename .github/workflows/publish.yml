@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     permissions:
-      id-token: write  # required for PyPI Trusted Publishing
+      id-token: write # required for PyPI Trusted Publishing
       contents: read
     steps:
       - name: Checkout code

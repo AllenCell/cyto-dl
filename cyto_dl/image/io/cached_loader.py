@@ -103,7 +103,8 @@ class CachedLoadImaged(MapTransform):
     @staticmethod
     def _cache_key(file_path: str, channel: Optional[int] = None) -> str:
         key_str = file_path if channel is None else f"{file_path}_c{channel}"
-        return hashlib.md5(key_str.encode()).hexdigest()[:16]
+        # md5 used solely as a short, fast cache-key digest; not security-relevant.
+        return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()[:16]
 
     def _cache_file(self, key: str) -> Path:
         return self.cache_dir / f"{key}.npy"

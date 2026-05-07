@@ -66,6 +66,7 @@ python scripts/download_test_data.py
 CytoDL supports GPU acceleration via PyTorch with CUDA. Choose the installation command that matches your CUDA version:
 
 #### CUDA 13.0 (Latest)
+
 ```bash
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 pip install -r requirements/requirements.txt
@@ -73,6 +74,7 @@ pip install -e .
 ```
 
 #### CUDA 12.4
+
 ```bash
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
 pip install -r requirements/requirements.txt
@@ -80,6 +82,7 @@ pip install -e .
 ```
 
 #### CUDA 12.1
+
 ```bash
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements/requirements.txt
@@ -87,6 +90,7 @@ pip install -e .
 ```
 
 #### CUDA 11.8
+
 ```bash
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
 pip install -r requirements/requirements.txt
@@ -94,6 +98,7 @@ pip install -e .
 ```
 
 #### CPU Only
+
 ```bash
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements/requirements.txt
