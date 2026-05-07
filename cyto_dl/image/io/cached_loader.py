@@ -13,6 +13,7 @@ import hashlib
 import logging
 import re
 import time
+from contextlib import suppress
 from pathlib import Path
 from typing import Dict, Hashable, Mapping, Optional, Union
 
@@ -23,9 +24,7 @@ from monai.transforms import MapTransform
 logger = logging.getLogger(__name__)
 
 # Pattern: https://<bucket>.s3.<region>.amazonaws.com/<key>
-_S3_HTTPS_RE = re.compile(
-    r"^https?://([^.]+)\.s3[.\-]([^.]+)?\.?amazonaws\.com/(.+)$"
-)
+_S3_HTTPS_RE = re.compile(r"^https?://([^.]+)\.s3[.\-]([^.]+)?\.?amazonaws\.com/(.+)$")
 
 
 def _https_to_s3(url: str) -> str:
@@ -143,8 +142,7 @@ class CachedLoadImaged(MapTransform):
         """Load volume via BioImage (non-zarr formats)."""
         from bioio import BioImage
 
-        img = BioImage(file_path)
-        data = img.get_image_dask_data(self.dimension_order_out).compute()
+        data = BioImage(file_path).get_image_dask_data(self.dimension_order_out).compute()
         if channel is not None:
             data = data[channel : channel + 1]
         return np.ascontiguousarray(data)
@@ -193,10 +191,8 @@ class CachedLoadImaged(MapTransform):
                     file_path,
                     exc,
                 )
-                try:
+                with suppress(OSError):
                     cache_file.unlink()
-                except OSError:
-                    pass
 
         # Download from source
         volume = self._load_from_source(file_path, channel)
@@ -215,14 +211,10 @@ class CachedLoadImaged(MapTransform):
                 np.save(tmp_file, volume)
                 tmp_file.rename(cache_file)
         except Exception as exc:
-            logger.warning(
-                "[CachedLoadImaged] Failed to cache %s: %s", file_path, exc
-            )
+            logger.warning("[CachedLoadImaged] Failed to cache %s: %s", file_path, exc)
         finally:
-            try:
+            with suppress(OSError):
                 lock_file.unlink()
-            except OSError:
-                pass
 
         return volume
 
@@ -241,9 +233,7 @@ class CachedLoadImaged(MapTransform):
     # MONAI MapTransform interface
     # ------------------------------------------------------------------
 
-    def __call__(
-        self, data: Mapping[Hashable, str]
-    ) -> Dict[Hashable, Union[np.ndarray, str]]:
+    def __call__(self, data: Mapping[Hashable, str]) -> Dict[Hashable, Union[np.ndarray, str]]:
         d = dict(data)
         channel = self._resolve_channel(d)
         for key in self.key_iterator(d):

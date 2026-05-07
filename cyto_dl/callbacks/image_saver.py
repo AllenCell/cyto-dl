@@ -75,7 +75,9 @@ class ImageSaver(Callback):
                     for k, save_path in head_io_map.items():
                         if tp_suffix is not None:
                             save_path = Path(save_path)
-                            save_path = save_path.parent / f"{save_path.stem}{tp_suffix}{save_path.suffix}"
+                            save_path = (
+                                save_path.parent / f"{save_path.stem}{tp_suffix}{save_path.suffix}"
+                            )
                         self._save(save_path, outputs[k]["pred"][i])
             else:
                 # io_map is None - use custom filename from batch metadata
@@ -111,7 +113,13 @@ class ImageSaver(Callback):
                                 transformed_outputs[key] = {}
                             transformed_outputs[key][head_name] = value
 
-                self.save(transformed_outputs, "predict", batch_idx, suffix=suffix, base_filename=base_filename)
+                self.save(
+                    transformed_outputs,
+                    "predict",
+                    batch_idx,
+                    suffix=suffix,
+                    base_filename=base_filename,
+                )
 
     # train/test/val
     def save(self, outputs, stage=None, step=None, suffix=None, base_filename=None):
@@ -142,7 +150,7 @@ class ImageSaver(Callback):
             return None
 
         # Check for path column directly in batch (added via CSV columns)
-        for key in ["path", "file", "filepath", "raw_path", "image_path", "filename"]:
+        for key in ("path", "file", "filepath", "raw_path", "image_path", "filename"):
             if key in batch:
                 val = batch[key]
                 if isinstance(val, str):
@@ -152,12 +160,12 @@ class ImageSaver(Callback):
                         return Path(val[0]).stem
 
         # Try to find from MONAI metadata if available
-        for key in ["raw", "seg", "source", "input", "image"]:
+        for key in ("raw", "seg", "source", "input", "image"):
             meta_key = f"{key}_meta_dict"
             if meta_key in batch:
                 meta = batch[meta_key]
                 if isinstance(meta, dict):
-                    for fname_key in ["filename_or_obj", "filename", "path"]:
+                    for fname_key in ("filename_or_obj", "filename", "path"):
                         if fname_key in meta:
                             filepath = meta[fname_key]
                             if isinstance(filepath, (list, tuple)):

@@ -4,12 +4,12 @@ https://github.com/PyTorchLightning/pytorch-lightning/blob/master/tests/helpers/
 """
 
 import sys
+from importlib.metadata import version as get_pkg_version
 from typing import Optional
 
 import pytest
 import torch
 from packaging.version import Version
-from importlib.metadata import version as get_pkg_version
 
 from tests.helpers.package_available import (
     _COMET_AVAILABLE,

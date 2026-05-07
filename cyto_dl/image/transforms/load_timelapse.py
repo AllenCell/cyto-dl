@@ -12,10 +12,11 @@ from cyto_dl.image.io import MonaiBioReader
 
 
 class LoadTimelapseImaged(MapTransform):
-    """Load timelapse images with dynamic timepoint selection from data dict.
+    """
+    Load timelapse images with dynamic timepoint selection from data dict.
 
-    Unlike MONAI's LoadImaged, this transform passes the full data dict to
-    the reader so it can extract timepoint and other metadata.
+    Unlike MONAI's LoadImaged, this transform passes the full data dict to the reader so it can
+    extract timepoint and other metadata.
     """
 
     def __init__(

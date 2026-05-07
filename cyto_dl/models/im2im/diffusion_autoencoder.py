@@ -2,9 +2,9 @@ import math
 from copy import deepcopy
 from typing import Optional, Sequence
 
+import tifffile
 import torch
 import torch.nn as nn
-import tifffile
 import tqdm
 from monai.inferers import Inferer
 from monai.networks.schedulers import NoiseSchedules
