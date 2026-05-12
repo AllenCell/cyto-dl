@@ -3,9 +3,9 @@ from copy import deepcopy
 from pathlib import Path
 
 import numpy as np
+import tifffile
 import torch
 import torch.nn as nn
-from bioio.writers import OmeTiffWriter
 from PIL import Image, ImageDraw, ImageFont
 from skimage.exposure import rescale_intensity
 from torchmetrics import MeanMetric
@@ -104,10 +104,7 @@ class Classification(BaseModel):
         movie = rescale_intensity(np.stack(movie), out_range=(0, 255)).astype(np.uint8)
         save_path = Path(self.hparams.save_dir) / f"{stage}_images" / f"{name}.ome.tiff"
         save_path.parent.mkdir(exist_ok=True, parents=True)
-        OmeTiffWriter.save(
-            uri=save_path,
-            data=movie,
-        )
+        tifffile.imwrite(save_path, movie)
 
     def model_step(self, stage, batch, batch_idx):
         logits = self(batch[self.hparams.x_key]).squeeze(0)

@@ -29,7 +29,7 @@ backbone:
   decoder_layer: 1
   decoder_dim: 16
   mask_ratio: 0.66666666666
-  context_pixels: 3
+  context_pixels: 0
   use_crossmae: True
 
 task_heads: ${kv_to_dict:${model._aux._tasks}}

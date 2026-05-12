@@ -132,6 +132,11 @@ repos:
     hooks:
       - id: refurb
         language_version: python3.10
+        # Pin mypy <1.18: refurb v2.0.0's `Options.allow_redefinition`
+        # write target was removed upstream in mypy 1.18, raising
+        # AttributeError on hook startup. See refurb#469.
+        additional_dependencies:
+          - "mypy<1.18"
         args:
           - --ignore
           - FURB120

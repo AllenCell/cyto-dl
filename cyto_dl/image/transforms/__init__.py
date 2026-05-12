@@ -1,6 +1,7 @@
 from .bright_sampler import BrightSampler
 from .clip import Clip, Clipd
 from .contrastadjust import ContrastAdjustd
+from .load_timelapse import LoadTimelapseImaged
 from .merge import Merged
 from .multiscale_cropper import RandomMultiScaleCropd
 from .pad import PadZd

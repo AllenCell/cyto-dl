@@ -13,6 +13,7 @@ from .utils import (
     make_single_dataframe_splits,
     parse_transforms,
 )
+from .worker_init import cloud_worker_init_fn
 
 
 class DataframeDatamodule(LightningDataModule):
@@ -166,6 +167,10 @@ class DataframeDatamodule(LightningDataModule):
         kwargs = {**self.dataloader_kwargs}
         kwargs["shuffle"] = kwargs.get("shuffle", True) and split == "train"
         kwargs["batch_size"] = self.batch_size
+
+        # Inject worker_init_fn to reset fsspec state for cloud data access
+        if kwargs.get("num_workers", 0) > 0 and "worker_init_fn" not in kwargs:
+            kwargs["worker_init_fn"] = cloud_worker_init_fn
 
         subset = self.get_dataset(split)
         return DataLoader(dataset=subset, **kwargs)

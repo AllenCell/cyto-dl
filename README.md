@@ -1,9 +1,9 @@
 <div align="center">
 
 <!-- <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/AllenCellModeling/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onDark.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/AllenCellModeling/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onLight.png">
-  <img src="https://github.com/AllenCellModeling/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onLight.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/AllenCell/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onDark.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/AllenCell/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onLight.png">
+  <img src="https://github.com/AllenCell/cyto-dl/blob/b73e6f357727e3b42adea8540c86f2475ea60379/docs/CytoDL-logo-1C-onLight.png">
 </picture> -->
 
 <h1>CytoDL</h1>
@@ -17,9 +17,9 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/AllenCellModeling/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_dark_1.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/AllenCellModeling/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_light_1.png">
-    <img src="https://github.com/AllenCellModeling/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_light_1.png">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/AllenCell/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_dark_1.png">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/AllenCell/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_light_1.png">
+    <img src="https://github.com/AllenCell/cyto-dl/blob/acf7dad69f492c417b0e486f8f08c19f25575927/docs/CytoDL-overview_light_1.png">
   </picture>
 </p>
 
@@ -41,24 +41,117 @@ Install dependencies.
 
 ```bash
 # clone project
-git clone https://github.com/AllenCellModeling/cyto-dl
+git clone https://github.com/AllenCell/cyto-dl
 cd cyto-dl
 
 # [OPTIONAL] create conda environment
-conda install -c conda-forge -n myenv python=3.10 fortran-compiler blas-devel
-conda activate myenv
+conda create -n cyto-dl python=3.12
+conda activate cyto-dl
 
-# If you have a recent version of pip (e.g., 25.0.1), the --no-deps may be unnecessary
-pip install --no-deps -r requirements/requirements.txt
+# Install dependencies (see CUDA Installation section below for GPU support)
+pip install -r requirements/requirements.txt
 
 # [OPTIONAL] install extra dependencies - equivariance related
-pip install --no-deps -r requirements/equiv-requirements.txt
+pip install -r requirements/equiv-requirements.txt
 
 pip install -e .
 
 
 #[OPTIONAL] if you want to use default experiments on example data
 python scripts/download_test_data.py
+```
+
+### CUDA Installation
+
+CytoDL supports GPU acceleration via PyTorch with CUDA. Choose the installation command that matches your CUDA version:
+
+#### CUDA 13.0 (Latest)
+
+```bash
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
+pip install -r requirements/requirements.txt
+pip install -e .
+```
+
+#### CUDA 12.4
+
+```bash
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+pip install -r requirements/requirements.txt
+pip install -e .
+```
+
+#### CUDA 12.1
+
+```bash
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+pip install -r requirements/requirements.txt
+pip install -e .
+```
+
+#### CUDA 11.8
+
+```bash
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+pip install -r requirements/requirements.txt
+pip install -e .
+```
+
+#### CPU Only
+
+```bash
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install -r requirements/requirements.txt
+pip install -e .
+```
+
+> **Note:** Install PyTorch with the desired CUDA version *before* installing the requirements to ensure compatibility. You can check your CUDA version with `nvidia-smi` or `nvcc --version`.
+
+> **Note:** No code changes are required in CytoDL for different CUDA versions. All CUDA interaction is handled through PyTorch's abstraction layer. Simply install the appropriate PyTorch build for your CUDA version.
+
+### Windows Installation
+
+Some packages (like `edt`) require C++ compilation and may fail to build on Windows. Use conda to install these packages before installing the requirements:
+
+```bash
+# Create and activate conda environment
+conda create -n cyto-dl python=3.12
+conda activate cyto-dl
+
+# Install packages that require compilation via conda
+conda install -c conda-forge edt
+
+# Install PyTorch with CUDA support (adjust cu124 to your CUDA version)
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+
+# Install remaining dependencies
+pip install -r requirements/requirements.txt
+pip install -e .
+```
+
+> **Note:** Due to dependency issues, equivariant autoencoders (`equiv` extras) and spherical harmonics (`spharm` extras) are not supported on Windows.
+
+### Corporate Proxy / PyPI Mirror Issues
+
+If you're behind a corporate proxy or using an internal PyPI mirror (e.g., Artifactory), you may encounter errors when installing PyTorch because CUDA-specific wheels are hosted on PyTorch's own index, not on pypi.org.
+
+**Workaround:** Install PyTorch directly from the official source first, then install the remaining dependencies:
+
+```bash
+# Install PyTorch directly from pytorch.org (bypassing corporate mirror)
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+
+# Then install the rest (will use your configured mirror)
+pip install -r requirements/requirements.txt
+pip install -e .
+```
+
+Alternatively, bypass the mirror entirely for the full installation:
+
+```bash
+pip install -r requirements/requirements.txt \
+    --index-url https://pypi.org/simple/ \
+    --extra-index-url https://download.pytorch.org/whl/cu124
 ```
 
 ### API

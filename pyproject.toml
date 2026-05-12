@@ -1,10 +1,10 @@
 [build-system]
-requires = ["pdm-pep517>=1.0.0", "numpy>=1.23.5"]
+requires = ["pdm-pep517>=1.0.0", "numpy>=1.26.0"]
 build-backend = "pdm.pep517.api"
 
 [project]
 name = "cyto-dl"
-version = "0.6.2"
+version = "0.6.3"
 description = """\
   Collection of representation learning models, techniques, callbacks, utils, \
   used to create latent variable models of cell shape, morphology and \
@@ -17,92 +17,93 @@ authors = [
     { name = "Ritvik Vasan", email = "ritvik.vasan@alleninstitute.org" },
 ]
 dependencies = [
-    "hydra-core~=1.3.0",
+    "hydra-core>=1.3.0",
     "hydra-colorlog>=1.2",
     "hydra-optuna-sweeper>=1.2",
-    "torch~=2.0.0",
-    "numpy>=1.23",
-    "matplotlib>=3.7",
-    "pandas>=1.5",
+    "torch>=2.5.0",
+    "numpy>=1.26.0,<2.0",
+    "matplotlib>=3.9",
+    "pandas>=2.2",
     "fire>=0.5",
-    "mlflow>=2.1",
+    "mlflow>=2.18,<3",
     "omegaconf>=2.3",
-    "pyarrow>=10.0",
+    "pyarrow>=18.0",
     "pyrootutils>=1.0",
     "PyYAML>=6.0",
-    "scikit-learn>=1.2",
-    "universal-pathlib>=0.0",
-    "ome-zarr>=0.6",
-    "anndata>=0.8",
-    "monai>=1.4",
-    "timm>=0.9.7",
-    "tqdm>=4.64",
-    "lightning>=2.0",
-    "einops>=0.6.1",
+    "scikit-learn>=1.5",
+    "universal-pathlib>=0.2",
+    "ome-zarr>=0.10",
+    "anndata>=0.11",
+    "monai>=1.5",
+    "timm>=1.0.11",
+    "tqdm>=4.66",
+    "lightning>=2.4",
+    "einops>=0.8",
     "edt>=3.0.0",
-    "astropy>=5.2",
+    "astropy>=6.1",
     "rich",
     "boto3",
-    "bioio>=1.0.1",
-    "bioio-base!=1.0.5,!=1.0.6", # These versions have issues resolved by 1.0.7, which only supports Python 3.10+
+    "bioio>=1.5",
+    "bioio-base>=1.1",
     "bioio-czi",
     "bioio-ome-tiff",
     "bioio-ome-zarr",
     "bioio-tifffile",
-    "tifffile>=2024.0.0,<2025.2.18",
+    "tifffile>=2024.8.0",
     "online-stats>=2023",
     "opencv-python>=4.10.0",
     "positional-encodings>=6.0.3",
+    "zarr>=2.18",
 ]
-requires-python = ">=3.9,<3.12"
+requires-python = ">=3.10,<3.13"
 
 [project.optional-dependencies]
 equiv = [
     "lie_learn==0.0.1.post1",
-    "escnn~=1.0.7",
+    "escnn>=1.0.11",
     "py3nj>=0.2.1",
-    "e3nn~=0.5.1"
+    "e3nn>=0.5.4"
 ]
 spharm = [
-    "vtk~=9.2",
-    "aicscytoparam~=0.1",
-    "pyshtools==4.10.3",
+    "vtk>=9.3",
+    "aicscytoparam>=0.1",
+    "pyshtools>=4.13",
 ]
 s3 = [
-    "boto3>=1.23.5,<1.24.5",
-    "s3fs~=2023.1"
+    "boto3>=1.35",
+    "s3fs>=2024.10"
 ]
 torchserve = [
-    "torchserve>=0.8.0",
+    "torchserve>=0.12.0",
     "gorilla>=0.4.0",
 ]
 pcloud = [
     "pyntcloud>=0.3.1",
     "aicsshparam>=0.1.7",
-    "torch-geometric>=2.3.1",
-    "point-cloud-utils>=0.29.6",
+    "torch-geometric>=2.6",
+    "point-cloud-utils>=0.30",
     "geomloss>=0.2.6",
     "Ninja>=1.11.1",
-    "torchio>=0.19.1",
+    "torchio>=0.20",
 ]
 all = [
     "cyto-dl[equiv,spharm,s3,torchserve,pcloud]",
 ]
 test = [
     "cyto-dl",
-    "pytest~=7.2",
-    "pytest-cov[toml]~=4.0",
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
 ]
 docs = [
     "cyto-dl",
-    "furo<=2023.3.23",
-    "m2r2<=0.3.3.post2",
-    "sphinx<=6.1.3",
+    "furo>=2024.8",
+    "m2r2>=0.3.3",
+    "sphinx>=7.4",
 ]
 
 
 [project.urls]
-Homepage = "https://github.com/AllenCellModeling/cyto-dl"
+Homepage = "https://github.com/AllenCell/cyto-dl"
 
 [tool.pdm.build]
 includes = ["cyto_dl", "README.md", "LICENSE", "**/*.yaml" ]
@@ -145,7 +146,7 @@ exclude_lines = [
 
 # https://pypi.org/project/bumpver
 [tool.bumpver]
-current_version = "0.6.2"
+current_version = "0.6.3"
 version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 commit_message  = "Bump version {old_version} -> {new_version}"
 commit          = true
@@ -163,3 +164,6 @@ push            = false
 # This means that uv users who want to use equivariant models must install dependencies
 # in two steps: `uv sync`, then `uv sync --extra equiv`.
 no-build-isolation-package = ["lie_learn"]
+
+# Resolve for Linux and Windows to support CUDA environments
+environments = ["sys_platform == 'linux'", "sys_platform == 'win32'"]

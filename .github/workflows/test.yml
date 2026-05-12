@@ -17,60 +17,54 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #os: [ubuntu-latest, macOS-latest, windows-latest]
         os: [ubuntu-latest, windows-latest]
-        python-version: [3.9, "3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v3
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          python-version: ${{ matrix.python-version }}
-          use-mamba: true
+      - uses: actions/checkout@v4
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      # NOTE: the `equiv` extra is intentionally excluded from CI because the
+      # `lie_learn` source distribution requires manual C-source patching on
+      # Python >= 3.12 (see ugly_install.sh). Re-add when lie_learn ships a
+      # Python 3.12-compatible release.
       - name: Install dependencies
-        shell: bash -el {0}
         run: |
-          conda activate test
-          conda install -c conda-forge -n test fortran-compiler blas-devel
-          pip install greenlet
-          pip install --no-deps -r requirements/test-requirements.txt
-          pip install .
+          uv sync --extra spharm --extra s3 --extra torchserve --extra pcloud --extra test
 
       - name: List dependencies
-        shell: bash -el {0}
-        run: |
-          python -m pip list
+        run: uv pip list
 
       - name: Run pytest
-        shell: bash -el {0}
-        run: |
-          python -m pytest -v
+        run: uv run pytest -v
 
   # upload code coverage report
   code-coverage:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: conda-incubator/setup-miniconda@v3
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
         with:
-          auto-update-conda: true
-          python-version: "3.10"
+          python-version: "3.11"
+          enable-cache: true
 
       - name: Install dependencies
-        shell: bash -el {0}
         run: |
-          conda activate test
-          conda install -c conda-forge -n test pip fftw gfortran blas-devel
-          pip install --no-deps -r requirements/test-requirements.txt
-          pip install .
+          uv sync --extra spharm --extra s3 --extra torchserve --extra pcloud --extra test
 
       - name: Run tests and collect coverage
-        shell: bash -el {0}
-        run: pytest --cov cyto_dl
+        run: uv run pytest --cov cyto_dl --cov-report=xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: false

@@ -1,4 +1,4 @@
 # -----DO NOT MODIFY THIS FILE-----
 # This file should only be modified by bumpver, which should in turn only be ran
 # via a GH Action
-version = "0.6.2"
+version = "0.6.3"
