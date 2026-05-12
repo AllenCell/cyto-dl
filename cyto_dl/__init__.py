@@ -29,8 +29,11 @@ warnings.filterwarnings("ignore")
 # Allowlisting class-by-class via `torch.serialization.add_safe_globals` is
 # whack-a-mole because Hydra configs can target arbitrary user code. Cyto-dl
 # users load their own checkpoints, so we honor the pre-2.6 default by
-# wrapping `torch.load` to inject `weights_only=False` when the caller
-# didn't pass it explicitly. Pass `weights_only=True` to opt back in.
+# wrapping `torch.load` to force `weights_only=False` whenever the caller
+# either omits the argument or passes the sentinel `None` (e.g. Lightning's
+# `lightning.fabric.utilities.cloud_io._load` forwards `weights_only=None`
+# unconditionally on torch >= 2.6). Pass `weights_only=True` explicitly at
+# the call site to opt back in.
 import functools as _functools
 
 import torch as _torch
@@ -40,7 +43,8 @@ if not getattr(_torch.load, "_cyto_dl_patched", False):
 
     @_functools.wraps(_orig_torch_load)
     def _cyto_dl_torch_load(*args, **kwargs):
-        kwargs.setdefault("weights_only", False)
+        if kwargs.get("weights_only") is None:
+            kwargs["weights_only"] = False
         return _orig_torch_load(*args, **kwargs)
 
     _cyto_dl_torch_load._cyto_dl_patched = True  # type: ignore[attr-defined]
