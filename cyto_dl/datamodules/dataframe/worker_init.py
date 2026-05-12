@@ -6,8 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 def cloud_worker_init_fn(worker_id):
-    """
-    Reset fsspec async event loop state so each DataLoader worker gets fresh S3 connections.
+    """Reset fsspec async event loop state so each DataLoader worker gets fresh S3 connections.
 
     When PyTorch forks workers, the parent's asyncio event loop and thread references are copied
     but dead in the child. This function clears that state so fsspec/s3fs create new connections

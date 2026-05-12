@@ -13,46 +13,35 @@ logging.getLogger("xmlschema").setLevel(logging.ERROR)
 warnings.filterwarnings("ignore")
 
 
-# Register OmegaConf classes as safe globals for torch.load.
+# Default torch.load's `weights_only` to False for cyto-dl-shaped checkpoints.
 #
 # PyTorch >= 2.6 flipped the default of `weights_only` in `torch.load` to
 # True, which means the safe-unpickler rejects any non-allowlisted class.
-# Lightning checkpoints saved by cyto-dl embed Hydra/OmegaConf hparams
-# (DictConfig, ListConfig, ContainerMetadata, AnyNode, ...), so resuming
-# training (`Trainer.fit(ckpt_path=...)`) or running
+# Lightning checkpoints saved by cyto-dl embed Hydra-instantiable hparams
+# (OmegaConf containers, typing.Any, and arbitrary user-targeted classes),
+# so resuming training (`Trainer.fit(ckpt_path=...)`), evaluating
+# (`Trainer.test(ckpt_path=...)`), or calling
 # `LightningModule.load_from_checkpoint(...)` would otherwise fail with:
 #
 #     UnpicklingError: Weights only load failed. ... Unsupported global:
-#     GLOBAL omegaconf.listconfig.ListConfig was not an allowed global.
+#     GLOBAL <something> was not an allowed global.
 #
-# OmegaConf containers are pure config holders, so allowlisting them is
-# safe.
-try:  # pragma: no cover - defensive: torch may be absent in some tooling
-    import torch as _torch
+# Allowlisting class-by-class via `torch.serialization.add_safe_globals` is
+# whack-a-mole because Hydra configs can target arbitrary user code. Cyto-dl
+# users load their own checkpoints, so we honor the pre-2.6 default by
+# wrapping `torch.load` to inject `weights_only=False` when the caller
+# didn't pass it explicitly. Pass `weights_only=True` to opt back in.
+import functools as _functools
 
-    if hasattr(_torch.serialization, "add_safe_globals"):
-        from omegaconf import DictConfig as _DictConfig
-        from omegaconf import ListConfig as _ListConfig
-        from omegaconf.base import ContainerMetadata as _ContainerMetadata
-        from omegaconf.base import Metadata as _Metadata
-        from omegaconf.nodes import AnyNode as _AnyNode
-        from omegaconf.nodes import BooleanNode as _BooleanNode
-        from omegaconf.nodes import FloatNode as _FloatNode
-        from omegaconf.nodes import IntegerNode as _IntegerNode
-        from omegaconf.nodes import StringNode as _StringNode
+import torch as _torch
 
-        _torch.serialization.add_safe_globals(
-            [
-                _DictConfig,
-                _ListConfig,
-                _ContainerMetadata,
-                _Metadata,
-                _AnyNode,
-                _BooleanNode,
-                _FloatNode,
-                _IntegerNode,
-                _StringNode,
-            ]
-        )
-except ImportError:
-    pass
+if not getattr(_torch.load, "_cyto_dl_patched", False):
+    _orig_torch_load = _torch.load
+
+    @_functools.wraps(_orig_torch_load)
+    def _cyto_dl_torch_load(*args, **kwargs):
+        kwargs.setdefault("weights_only", False)
+        return _orig_torch_load(*args, **kwargs)
+
+    _cyto_dl_torch_load._cyto_dl_patched = True  # type: ignore[attr-defined]
+    _torch.load = _cyto_dl_torch_load  # type: ignore[assignment]
